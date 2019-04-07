@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 
 import com.example.weatherapp.R
 import com.example.weatherapp.data.OpenWeatherApiService
+import com.example.weatherapp.internal.glide.GlideApp
 import com.example.weatherapp.network.ConnectivityInterceptor
 import com.example.weatherapp.network.ConnectivityInterceptorImpl
 import com.example.weatherapp.network.WeatherNetworkDataSourceImpl
@@ -42,18 +44,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(CurrentWeatherViewModel::class.java)
         bindUI()
-//
-//        val apiService = OpenWeatherApiService(ConnectivityInterceptorImpl(this.context!!))
-//        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
-//
-//        weatherNetworkDataSource.downloadedCurrentWeather.observe(this, Observer{
-//            textView.text = it.toString()
-//        })
-//
-//        GlobalScope.launch(Dispatchers.Main) {
-//
-//            weatherNetworkDataSource.fetchCurrentWeather("London")
-//        }
     }
 
     private fun bindUI() = launch{
@@ -61,7 +51,53 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
         currentWeather.observe(this@CurrentWeatherFragment, Observer {
             if(it == null) return@Observer
 
-            textView.text = it.toString()
+            group_loading.visibility = View.GONE
+            updateLocation("Los Angeles")
+            updateDateToToday()
+            updateTemperatures(it.temp, it.tempMin, it.tempMax)
+            updateWeatherDesc(it.weatherDesc)
+            updatePressure(it.pressure)
+            updateHumidity(it.humidity)
+
+//            GlideApp.with(this@CurrentWeatherFragment)
+//                .load("")
+//                .into(imageView_condition_icon)
         })
     }
+
+    private fun updateLocation(location : String){
+        (activity as? AppCompatActivity)?.supportActionBar?.title = location
+    }
+
+    private fun updateDateToToday(){
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today"
+    }
+
+    private fun updateTemperatures(temperature : Int,
+                                   minTemp : Int,
+                                   maxTemp : Int){
+        textView_temperature.text = "$temperature°C"
+        textView_min_temp.text = "$minTemp°C"
+        textView_max_temp.text = "$maxTemp°C"
+    }
+
+    private fun updateWeatherDesc(weatherDesc : String){
+        textView_weatherDesc.text = weatherDesc
+    }
+
+    private fun updatePressure(pressure : Int){
+        textView_pressure.text = pressure.toString()
+    }
+
+    private fun updateHumidity(humidity : Int){
+        textView_humidity.text = humidity.toString()
+    }
 }
+
+//val cityName: String,
+//val weatherDesc: String,
+//val temp: Int,
+//val tempMin: Int,
+//val tempMax: Int,
+//val pressure: Int,
+//val humidity: Int
