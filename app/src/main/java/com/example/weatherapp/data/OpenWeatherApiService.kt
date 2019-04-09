@@ -24,7 +24,10 @@ interface OpenWeatherApiService {
 
     @GET("weather")
     fun getCurrentWeather(
-        @Query("q") location : String
+        @Query("q") location : String?,
+        @Query("lat") latitude : Double?,
+        @Query("lon") longitude : Double?,
+        @Query("units") unit: String = "metric"
     ) : Deferred<CurrentWeatherResponse>
 
     companion object {

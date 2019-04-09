@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.Observer
 
 import com.example.weatherapp.R
@@ -41,6 +42,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        activity?.actionBar?.title = ""
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(CurrentWeatherViewModel::class.java)
         bindUI()
@@ -48,19 +50,31 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
 
     private fun bindUI() = launch{
         val currentWeather = viewModel.weather.await()
+        val location = viewModel.location.await()
+
+        location.observe(this@CurrentWeatherFragment, Observer {
+            location ->
+            if (location == null) return@Observer
+            updateLocation(location.cityName)
+        })
+
         currentWeather.observe(this@CurrentWeatherFragment, Observer {
             if(it == null) return@Observer
 
             group_loading.visibility = View.GONE
-            updateLocation("Los Angeles")
+
             updateDateToToday()
             updateTemperatures(it.temp, it.tempMin, it.tempMax)
             updateWeatherDesc(it.weatherDesc)
             updatePressure(it.pressure)
             updateHumidity(it.humidity)
+            updateCity(it.cityName)
+            imageView_condition_icon.setImageDrawable(context?.getDrawable(it.code))
 
+//            imageView_condition_icon.setImageResource(R.drawable.stormy)
 //            GlideApp.with(this@CurrentWeatherFragment)
-//                .load("")
+//                .load(context!!.getDrawable(R.drawable.cloudy))
+////                .override()
 //                .into(imageView_condition_icon)
         })
     }
@@ -76,9 +90,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
     private fun updateTemperatures(temperature : Int,
                                    minTemp : Int,
                                    maxTemp : Int){
+
         textView_temperature.text = "$temperature°C"
-        textView_min_temp.text = "$minTemp°C"
-        textView_max_temp.text = "$maxTemp°C"
+        textView_min_temp.text = "Min temperature: $minTemp°C"
+        textView_max_temp.text = "Max temperature: $maxTemp°C"
+    }
+
+    private fun updateCity(cityName : String){
+        textView_location.text = cityName
     }
 
     private fun updateWeatherDesc(weatherDesc : String){
@@ -86,11 +105,11 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware{
     }
 
     private fun updatePressure(pressure : Int){
-        textView_pressure.text = pressure.toString()
+        textView_pressure.text = "Pressure: $pressure"
     }
 
     private fun updateHumidity(humidity : Int){
-        textView_humidity.text = humidity.toString()
+        textView_humidity.text = "Humidity: $humidity"
     }
 }
 
