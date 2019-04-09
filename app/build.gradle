@@ -86,6 +86,13 @@ dependencies {
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    kapt 'com.github.bumptech.glide:compiler:4.8.0'
+
+    // WeatherLocation
+    implementation "com.google.android.gms:play-services-location:16.0.0"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'

@@ -9,6 +9,8 @@ interface WeatherNetworkDataSource {
     val downloadedCurrentWeather: LiveData<Weather>
 
     suspend fun fetchCurrentWeather(
-        location: String
+        location: String?,
+        latitude: Double?,
+        longitude: Double?
     )
 }
