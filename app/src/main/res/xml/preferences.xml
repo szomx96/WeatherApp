@@ -18,4 +18,15 @@
                 android:dependency="USE_DEVICE_LOCATION"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Display">
+        <SwitchPreference
+                android:key=""
+                android:title="Dark theme"
+                android:summary="Enable dark theme"
+                android:defaultValue="false"
+                />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
